@@ -1,7 +1,9 @@
+
 var gatewayURL = "http://inca.nics.utk.edu/inca/JSON/kit-status-v1/sp-software-services/";
 var superCompNames = ['lsu-supermic', 'osg', 'psc-bridges',
                           'sdsc-comet', 'stanford-xstream', 'tacc-maverick', 'tacc-stampede', 'tacc-stampede2', 'tacc-wrangler'];
 var superComps = new Array();
+var hover = "";
         
     //Define Supercomputer Object
     var SuperComputer = function(name, tests, results){
@@ -21,6 +23,7 @@ var superComps = new Array();
            success: function(data){
                var currentTests = new Array(data["quer:object"].reportSummary.length);
                var currentResults = new Array(data["quer:object"].reportSummary.length);
+               var currentErrors = new Array(data["quer:object"].reportSummary.length);
                for(var j = 0; j < data["quer:object"].reportSummary.length; j++){
                    var nickname = data["quer:object"].reportSummary[j].nickname.content;
                    var result = "";
@@ -28,24 +31,28 @@ var superComps = new Array();
                        result = data["quer:object"].reportSummary[j].comparisonResult.content;
                        if(result.includes("Failure:errorMessage")){
                            result = "Error: " + data["quer:object"].reportSummary[j].errorMessage.content;
+                           
                         }
                    }catch(err){
                        result = "No Results Found";
                    }
                    currentTests[j] = nickname;
                    currentResults[j] = result;   
+                 
                }
                superComps[i] = new SuperComputer(superCompNames[i], currentTests, currentResults);
            }
         });
         }
 
+
     function createChart(tests, results){
-        var chart = new Array();
+       var chart = new Array();
         for(var i = 0; i < tests.length; i++){
             var color;
             if(results[i] == "Success"){
                 color = "#45a2d1";
+               
             }else if(results[i] == "No Results Found"){
                 color = "#808080";
             }else{
@@ -67,341 +74,21 @@ var TaccMav = createChart(superComps[5].tests, superComps[5].results);
 var TaccStamp2 = createChart(superComps[7].tests, superComps[7].results);
 var TaccWrang = createChart(superComps[8].tests, superComps[8].results);
 
-var sdscTestOne = [
-    [
-      "elapsed",
-        "39 seconds"],[
-      "ran at",
-        "07-25-2017 04:27 AM (PDT)"],[
-      "age",
-        "10 hr 9 min"],[
-      "cron",
-        "27 4 * * *"
-    ],[
-      "ran on",
-        "comet-ln3.sdsc.edu" ] ,[
-      "account",
-        "TG-IRI160006" ],[
-      "gateway",
-        "yes" ],[
-      "help",
-        "no"],[
-      "log",
-        "5"],[
-      "nodes",
-        "1::1" ],[
-      "poll",
-        "60"],[
-      "randomwait",
-        "0" ],[
-      "scheduler",
-        "slurm"  ],[
-      "shell",
-        "/bin/sh"  ],[
-      "showscript",
-        "no"  ],[
-      "timeout",
-        "0" ],[
-      "verbose",
-        "1" ],[
-      "version",
-        "no" ],[
-      "wallimit",
-        "10" ]]
 
-var sdscTestTwo = [ [  "numMissingCa",    "0"],[  "numWarnCa",    "0"],[  "numExpiredCa",    "0"],[  "NumMissingCrl",   "0"],[ "numWarnCrl",  "0" ] ,[ "numExpiredCrl",   "0" ],[  "ran at",    "07-25-2017 05:22 PM (PDT)" ],[ "age",    "1 days 5 hours 21 mins"],[  "cron",   "22 17 * * *"],[ "ran on",   "comet-ln3.sdsc.edu"],[   "help",     "no"],[  "log",   "warn|error" ],[  "minCertDays",   "14"  ],[  "minCrlDays",    "3"  ],[  "verbose",    "1"  ],[  "version",  "no"]]
+var begin = [[  "Please click on", ""], ["any test to", ""],["view more details", ""],["",""],["Use the scrollbars",""],["to see results",""]]
 
-var sdscTestThree = [ [  "ran at",    "07-26-2017 08:00 AM (PDT)"],[  "age",    "15 hours 18 mins"],[  "cron",    "0 8 * * *"],[  "ran on",   "comet-ln3.sdsc.edu"],[ "help",  "no" ] ,[ "log",   "3" ],[ "verbose",    "1"],[  "version",   "no"]]
+report = {"quer:object":{"reportDetails":{"xmlns":"http://inca.sdsc.edu/dataModel/reportDetails_2.1","suiteId":{"xmlns":"","content":7},"comparisonResult":{"xmlns":"","content":"Success"},"instanceId":{"xmlns":"","content":2063863},"reportId":{"xmlns":"","content":2006430},"report":{"args":{"arg":[{"name":"gateway","value":"no"},{"name":"shell","value":"/bin/sh"},{"name":"submitparam","value":""},{"name":"walllimit","value":10},{"name":"log","value":5},{"name":"poll","value":60},{"name":"scheduler","value":"slurm"},{"name":"verbose","value":1},{"name":"help","value":"no"},{"name":"type","value":""},{"name":"randomwait","value":0},{"name":"var","value":""},{"name":"queue","value":""},{"name":"showscript","value":"no"},{"name":"version","value":"no"},{"name":"exec","value":""},{"name":"timeout","value":".000001"},{"name":"account","value":"TG-IRI160006"},{"name":"nodes","value":"1::1"}]},"xmlns":"","hostname":"comet-ln2.sdsc.edu","reporterPath":"/home/inca/inca-client-comet/var/reporter-packages/bin/cluster.batch.wrapper","log":{"system":[{"message":"sbatch /home/inca/inca-client-comet/sub2836.sub","gmt":"2017-08-03T19:13:00Z"},{"message":"`scancel 10552251`","gmt":"2017-08-03T19:14:13Z"}],"xmlns:rep":"http://inca.sdsc.edu/dataModel/report_2.1"},"workingDir":"/home/inca/inca-client-comet","name":"cluster.batch.wrapper","body":{"performance":{"xmlns:rep":"http://inca.sdsc.edu/dataModel/report_2.1","ID":"queuetime","benchmark":{"ID":"queuetime","parameters":{"parameter":[{"ID":"nodes","value":1},{"ID":"type","value":""}]},"statistics":{"statistic":{"ID":"elapsed","units":"seconds","value":"TBD"}}}}},"version":18,"exitStatus":{"errorMessage":"BATCH: Reporter submission timed out","completed":false},"gmt":"2017-08-03T15:14:13.000-04:00"},"sysusage":{"xmlns":"","memory":24.308594,"wallClockTime":72.93486,"cpuTime":4.026387},"seriesConfig":{"resourceHostname":"sdsc-comet","schedule":{"cron":{"wday":"*","min":13,"hour":"0-23/1","month":"*","mday":"*"},"numOccurs":-1,"suspended":false},"xmlns":"","series":{"args":{"arg":[{"name":"gateway","value":"no"},{"name":"shell","value":"/bin/sh"},{"name":"submitparam","value":""},{"name":"walllimit","value":10},{"name":"log","value":5},{"name":"poll","value":60},{"name":"scheduler","value":"slurm"},{"name":"verbose","value":1},{"name":"help","value":"no"},{"name":"type","value":""},{"name":"randomwait","value":0},{"name":"var","value":""},{"name":"queue","value":""},{"name":"showscript","value":"no"},{"name":"version","value":"no"},{"name":"exec","value":""},{"name":"timeout","value":".000001"},{"name":"account","value":"TG-IRI160006"},{"name":"nodes","value":"1::1"}]},"name":"cluster.batch.wrapper","context":"cluster.batch.wrapper -account=\"TG-IRI160006\" -exec=\"\" -gateway=\"no\" -help=\"no\" -log=\"5\" -nodes=\"1::1\" -poll=\"60\" -queue=\"\" -randomwait=\"0\" -scheduler=\"slurm\" -shell=\"/bin/sh\" -showscript=\"no\" -submitparam=\"\" -timeout=\".000001\" -type=\"\" -var=\"\" -verbose=\"1\" -version=\"no\" -walllimit=\"10\"","version":18,"uri":"http://inca.xsede.org/inca/xsede-repo/bin/cluster.batch.wrapper","nice":false},"nickname":"slurm-submit","targetHostname":"","action":"add","acceptedOutput":{"comparison":"errorMessage=='' || errorMessage=~'BATCH: Reporter submission timed out'","comparitor":"ExprComparitor","notifications":{"notification":{"notifier":"EmailNotifier","target":"FailTo:inca@sdsc.edu"}}},"tags":{"tag":["resource=comet.sdsc.xsede.org","name=slurm","software=slurm","version=0"]}},"stderr":{"xmlns":""},"seriesConfigId":{"xmlns":"","content":2005676},"seriesId":{"xmlns":"","content":2005675}},"xmlns:quer":"http://inca.sdsc.edu/dataModel/queryResults_2.0"}};
 
 
-var sdscTestFour = [ [  "ran at",    "07-27-2017 08:36 AM (PDT)"],[  "age",    "38 min"],[  "cron",    "36 8-23/12 * * *"],[  "ran on",   "comet-ln3.sdsc.edu"],[ "help",  "no" ] ,[ "log",   "1" ],[  "timeout",    "60" ],[ "verbose",    "1"],[  "version",   "no"]]
-
-var sdscTestFive = [ [  "ran at",    "07-27-2017 6:28 AM (PDT)"],[  "age",    "2 hr 52 min"],[  "cron",    "44 10-23/12 * * *"],[  "ran on",   "comet-ln3.sdsc.edu"],[ "help",  "no" ] ,[ "log",   "3" ],[ "verbose",    "1"],[  "version",   "no"]]
-/*
-var SDSC = [
-{x: "",             y: "batch-scheduler-slurm",  heat: 'Pass', fill: "#0099ff"},
-{x: "",             y: "ca-crl-check",  heat: 'Pass', fill: "#0099ff"},
-{x: "",             y: "globus-client-version-5.2.5 ",  heat: 'Pass', fill: "#0099ff"},
-{x: "",             y: "go-transfers_to_sdsc-comet",  heat: 'Fail', fill: "#FF6347"},
-{x: "",             y: "gridftp-nonstriped-auth",  heat: 'Pass', fill: "#0099ff"},
-{x: "",             y: "gridftp-nonstriped-transfer",          heat: 'Pass', fill: "#0099ff"},
-{x: "",             y: "gsi-scp-hpn-server",       heat: 'Pass', fill: "#0099ff"},
-{x: "",             y: "gsissh-rfc-2818-compliance",          heat: 'Pass', fill: "#0099ff"},
-{x: "",             y: "gsissh-unit",        heat: 'Pass', fill: "#0099ff"},
-{x: "",         y: "gsissh-version",  heat: 'Pass', fill: "#0099ff"},
-{x: "",         y: "hostcert-check",          heat: 'Pass', fill: "#0099ff"},
-{x: "",         y: "ipf-glue2-activity",       heat: 'No Result', fill: "#808080"},
-{x: "",         y: "ipf-glue2-compute",          heat: 'Pass', fill: "#0099ff"},
-{x: "",         y: "ipf-glue2-compute-activities",        heat: 'Pass', fill: "#0099ff"},
-{x: "",         y: "ipf-glue2-extmodules",  heat: 'Pass', fill: "#0099ff"},
-{x: "",         y: "ipf-glue2-services",          heat: 'No Result', fill: "#808080"},
-{x: "",         y: "myproxy-unit-globus5.2.5",       heat: 'Pass', fill: "#0099ff"},
-{x: "",         y: "myproxy-version-globus5.2.5",          heat: 'Pass', fill: "#0099ff"},
-{x: "",         y: "rdr_resource_info",        heat: 'Pass', fill: "#0099ff"},
-{x: "",         y: "slurmm-submit",        heat: 'Pass', fill: "#0099ff"},
-{x: "",           y: "uberftp-version",  heat: 'Pass', fill: "#0099ff"},
-{x: "",           y: "xdcdb_gateway-user-count",          heat: 'Pass', fill: "#0099ff"},
-{x: "",           y: "xdresourceid-unit",       heat: 'No Result', fill: "#808080"},
-{x: "",           y: "xdresourceid-version",          heat: 'No Result', fill: "#808080"},
-{x: "",           y: "xdusage-unit",        heat: 'Pass', fill: "#0099ff"},
-{x: "",  y: "xdusage-versio",  heat: 'Pass', fill: "#0099ff"},]
-
-var Stanford = [
-   {x: "",             y: "batch-scheduler-slurmm",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "ca-crl-check",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "globus-client-version-0 ",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "go-transfers_to_stanford-xstream",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-auth",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gridftp-nonstriped-external-telnet",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gridftp-nonstriped-registered-version",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-rfc-2818-complianc",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gridftp-nonstriped-transfer",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gsi-scp-hpn-server",       heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gsissh-rfc-2818-compliance",          heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gsissh-unit",        heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "gsissh-version",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "hostcert-check",          heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "ipf-glue2-activity",       heat: 'No Result', fill: "#808080"},
-   {x: "",         y: "ipf-glue2-compute",          heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "ipf-glue2-compute-activities",        heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "ipf-glue2-extmodules",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "ipf-glue2-services",          heat: 'No Result', fill: "#808080"},
-   {x: "",         y: "myproxy-unit-globus0",       heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "myproxy-version-globus0",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "rdr_resource_info",        heat: 'Pass', fill: "#0099ff"},
-   {x: "",           y: "uberftp-version",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",           y: "xdresourceid-unit",       heat: 'No Result', fill: "#808080"},
-   {x: "",           y: "xdresourceid-version",          heat: 'No Result', fill: "#808080"},
-   {x: "",           y: "xdusage-unit",        heat: 'Fail', fill: "#FF6347"},
-   {x: "",  y: "xdusage-version",  heat: 'Fail', fill: "#FF6347"},]
-
-
-var LSU =  [
-    {x: "",             y: "batch-scheduler-slurm",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "ca-crl-check",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "globus-client-version-5.0.4-r1 ",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "globus-client-version-5.7-8",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "globus-client-version-6.0",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "go-transfers_to_lsu-supermic",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gram5-batch",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gram5-external-gatekeeper-ping",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gram5-mpicc",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gram5-external-gatekeeper-ping",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gram5-rfc-2818-compliance",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-auth",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-external-telnet",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-registered-version",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gridftp-nonstriped-rfc-2818-compliance",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gridftp-nonstriped-transfer",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsi-scp-hpn-server",       heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gsissh-rfc-2818-compliance",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsissh-unit",        heat: 'Fail', fill: "#FF6347"},
-    {x: "",         y: "gsissh-version",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "hostcert-check",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-activity",       heat: 'No Result', fill: "#808080"},
-    {x: "",         y: "ipf-glue2-compute",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-compute-activities",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-extmodules",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-services",          heat: 'No Result', fill: "#808080"},
-    {x: "",         y: "myproxy-unit-globus5.0.4-r1",       heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "myproxy-unit-globus5.7-8",       heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "myproxy-unit-globus6.0",       heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "myproxy-version-globus5.0.4-r1",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "myproxy-version-globus5.7-8",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "myproxy-version-globus6.0",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "rdr_resource_info",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",           y: "uberftp-version",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",           y: "unicore-ucc-version",  heat: 'No Result', fill: "#808080"},
-    {x: "",           y: "xdcdb_gateway-user-count",          heat: 'Fail', fill: "#FF6347"},
-    {x: "",           y: "xdresourceid-unit",       heat: 'No Result', fill: "#808080"},
-    {x: "",           y: "xdresourceid-version",          heat: 'No Result', fill: "#808080"},
-    {x: "",           y: "xdusage-unit",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",  y: "xdusage-version",  heat: 'Pass', fill: "#0099ff"},]
-
-
-var OSU =   [
-   {x: "",             y: "batch-scheduler-slurmm",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "ca-crl-check",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "globus-client-version-0 ",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "go-transfers_to_osg",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-auth",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-external-telnet",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-registered-version",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-rfc-2818-compliance",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-transfer",          heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gsi-scp-hpn-server",       heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gsissh-rfc-2818-compliance",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gsissh-unit",        heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "gsissh-version",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "hostcert-check",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "ipf-glue2-activity",       heat: 'No Result', fill: "#808080"},
-   {x: "",         y: "ipf-glue2-compute",          heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "ipf-glue2-compute-activities",        heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "ipf-glue2-extmodules",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "ipf-glue2-services",          heat: 'No Result', fill: "#808080"},
-   {x: "",         y: "myproxy-unit-globus0",       heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "myproxy-version-globus0",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "rdr_resource_info",        heat: 'Pass', fill: "#0099ff"},
-   {x: "",           y: "uberftp-version",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",           y: "xdresourceid-unit",       heat: 'No Result', fill: "#808080"},
-   {x: "",           y: "xdresourceid-version",          heat: 'No Result', fill: "#808080"},
-   {x: "",           y: "xdusage-unit",        heat: 'Fail', fill: "#FF6347"},
-   {x: "",  y: "xdusage-versio",  heat: 'Fail', fill: "#FF6347"},]
-
-
-var Pitt =  [
-    {x: "",             y: "batch-scheduler-slurm",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "ca-crl-check",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "globus-client-version-0 ",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "go-transfers_to_psc-bridges",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gridftp-nonstriped-auth",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-external-telnet",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-registered-version",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-rfc-2818-complianc",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-transfer",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsi-scp-hpn-server",       heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsissh-rfc-2818-compliance",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsissh-unit",        heat: 'Pass', fill: "#0099ff"},
-        {x: "",         y: "gsissh-version",  heat: 'Pass', fill: "#0099ff"},
-        {x: "",         y: "hostcert-check",          heat: 'Pass', fill: "#0099ff"},
-        {x: "",         y: "ipf-glue2-activity",       heat: 'No Results Found', fill: "#808080"},
-        {x: "",         y: "ipf-glue2-compute",          heat: 'Fail', fill: "#FF6347"},
-        {x: "",         y: "ipf-glue2-compute-activities",        heat: 'Fail', fill: "#0099ff"},
-        {x: "",         y: "ipf-glue2-extmodules",  heat: 'Pass', fill: "#0099ff"},
-        {x: "",         y: "ipf-glue2-services",          heat: 'No Results Found', fill: "#808080"},
-        {x: "",         y: "myproxy-unit-globus0",       heat: 'Pass', fill: "#0099ff"},
-        {x: "",         y: "myproxy-version-globus0",          heat: 'Pass', fill: "#0099ff"},
-        {x: "",         y: "rdr_resource_info",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",           y: "uberftp-version",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",           y: "xdcdb_gateway-user-count",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",           y: "xdresourceid-unit",       heat: 'No Results Found', fill: "#808080"},
-    {x: "",           y: "xdresourceid-version",          heat: 'No Results Found', fill: "#808080"},
-    {x: "",           y: "xdusage-unit",        heat: 'Fail', fill: "#FF6347"},
-    {x: "",  y: "xdusage-versio",  heat: 'Pass', fill: "#0099ff"},]
-
-
-var TaccMav =  [
-    {x: "",             y: "batch-scheduler-slurm",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "ca-crl-check",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "globus-client-version-0 ",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "go-transfers_to_tacc-maverick",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gridftp-nonstriped-auth",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-registered-version",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gridftp-nonstriped-transfer",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsi-scp-hpn-server",       heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsissh-rfc-2818-compliance",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsissh-unit",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "gsissh-version",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "hostcert-check",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-activity",       heat: 'No Results Found', fill: "#808080"},
-    {x: "",         y: "ipf-glue2-compute",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-compute-activities",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-extmodules",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-services",          heat: 'No Results Found', fill: "#808080"},
-    {x: "",         y: "myproxy-unit-globus0",       heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "myproxy-version-globus0",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "rdr_resource_info",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",           y: "uberftp-version",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",           y: "xdresourceid-unit",       heat: 'No Results Found', fill: "#808080"},
-    {x: "",           y: "xdresourceid-version",          heat: 'No Results Found', fill: "#808080"},
-    {x: "",           y: "xdusage-unit",        heat: 'Fail', fill: "#FF6347"},
-    {x: "",  y: "xdusage-version",  heat: 'Pass', fill: "#0099ff"},]
-
-var TaccStamp1 =  [
-   {x: "",             y: "batch-scheduler-slurm",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "ca-crl-check",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "globus-client-version-5.2.3",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "globus-client-version-6.0",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gram5-batch ",  heat: 'No Results Found', fill: "#808080"},
-
-   {x: "",             y: "go-transfers_to_tacc-stampede ",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gram5-external-gatekeeper-ping ",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gram5-fork ",  heat: 'No Results Found ', fill: "#808080"},
-   {x: "",             y: "gram5-mpicc ",  heat: 'Pass', fill: "#FF6347"},
-   {x: "",             y: "gram5-rfc-2818-compliance ",  heat: 'Pass', fill: "#FF6347"},
-
-   {x: "",             y: "gridftp-nonstriped-auth",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gridftp-nonstriped-external-telnet ",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gridftp-nonstriped-registered-version",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-rfc-2818",  heat: 'Pass', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-transfer",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gsi-scp-hpn-server",       heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gsissh-rfc-2818-compliance",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gsissh-unit",        heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "gsissh-version",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "hostcert-check",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "ipf-glue2-activity",       heat: 'No Results Found', fill: "#808080"},
-   {x: "",         y: "ipf-glue2-compute",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "ipf-glue2-compute-activities",        heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "ipf-glue2-extmodules",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "ipf-glue2-services",          heat: 'No Results Found', fill: "#808080"},
-   {x: "",         y: "myproxy-unit-globus6.0",       heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "myproxy-version-globus5.2.3",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "rdr_resource_info",        heat: 'Pass', fill: "#0099ff"},
-   {x: "",           y: "uberftp-version",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",           y: "xdcdb_gateway-user-count ",       heat: 'Fail ', fill: "#FF6347"},
-   {x: "",           y: "xdresourceid-unit",       heat: 'No Results Found', fill: "#808080"},
-   {x: "",           y: "xdresourceid-version",          heat: 'No Results Found', fill: "#808080"},
-   {x: "",           y: "xdusage-unit",        heat: 'Pass', fill: "#FF6347"},
-   {x: "",  y: "xdusage-version",  heat: 'Pass', fill: "#0099ff"},]
-
-var TaccStamp2 =  [
-   {x: "",             y: "batch-scheduler-slurm",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "ca-crl-check",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "globus-client-version-6.0 ",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "go-transfers_to_tacc-stampede2",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-auth",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gridftp-nonstriped-external-telnet",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gridftp-nonstriped-registered-version",  heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gridftp-nonstriped-rfc-2818-compliance",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gridftp-nonstriped-transfer",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gsi-scp-hpn-server",       heat: 'Fail', fill: "#FF6347"},
-   {x: "",             y: "gsissh-rfc-2818-compliance",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",             y: "gsissh-unit",        heat: 'Fail', fill: "#FF6347"},
-   {x: "",         y: "gsissh-version",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "hostcert-check",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "ipf-glue2-activity",       heat: 'No Result', fill: "#808080"},
-   {x: "",         y: "ipf-glue2-compute",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "ipf-glue2-compute-activities",        heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "ipf-glue2-extmodules",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "ipf-glue2-services",          heat: 'No Result', fill: "#808080"},
-   {x: "",         y: "myproxy-unit-globus6.0",       heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "myproxy-version-globus6.0",          heat: 'Pass', fill: "#0099ff"},
-   {x: "",         y: "rdr_resource_info",        heat: 'Pass', fill: "#0099ff"},
-   {x: "",           y: "uberftp-version",  heat: 'Pass', fill: "#0099ff"},
-   {x: "",           y: "xdcdb_gateway-user-count",          heat: 'Fail', fill: "#FF6347"},
-   {x: "",           y: "xdresourceid-unit",       heat: 'No Result', fill: "#808080"},
-   {x: "",           y: "xdresourceid-version",          heat: 'No Result', fill: "#808080"},
-   {x: "",           y: "xdusage-unit",        heat: 'Pass', fill: "#0099ff"},
-   {x: "",  y: "xdusage-version",  heat: 'Pass', fill: "#0099ff"},]
-
-var TaccWrang =  [
-    {x: "",             y: "batch-scheduler-slurm",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "ca-crl-check",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "globus-client-version-6.0 ",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "go-transfers_to_tacc-wrangler",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gridftp-nonstriped-auth",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-external-telnet",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-registered-version",  heat: 'Fail', fill: "#FF6347"},
-    {x: "",             y: "gridftp-nonstriped-rfc-2818-compliance",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gridftp-nonstriped-transfer",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsi-scp-hpn-server",       heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsissh-rfc-2818-compliance",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",             y: "gsissh-unit",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "gsissh-version",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "hostcert-check",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-activity",       heat: 'No Result', fill: "#808080"},
-    {x: "",         y: "ipf-glue2-compute",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-compute-activities",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-extmodules",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "ipf-glue2-services",          heat: 'No Result', fill: "#808080"},
-    {x: "",         y: "myproxy-unit-globus6.0",       heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "myproxy-version-globus6.0",          heat: 'Pass', fill: "#0099ff"},
-    {x: "",         y: "rdr_resource_info",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",           y: "uberftp-version",  heat: 'Pass', fill: "#0099ff"},
-    {x: "",           y: "xdcdb_gateway-user-count",          heat: 'Fail', fill: "#FF6347"},
-    {x: "",           y: "xdresourceid-unit",       heat: 'No Result', fill: "#808080"},
-    {x: "",           y: "xdresourceid-version",          heat: 'No Result', fill: "#808080"},
-    {x: "",           y: "xdusage-unit",        heat: 'Pass', fill: "#0099ff"},
-    {x: "",  y: "xdusage-version",  heat: 'Pass', fill: "#0099ff"},]
-    */
+memoryData = report["quer:object"].reportDetails.sysusage.memory;
+wallClockData = report["quer:object"].reportDetails.sysusage.wallClockTime;
+cpuTimeData = report["quer:object"].reportDetails.sysusage.cpuTime;
+verbose1 = report["quer:object"].reportDetails.report.args.arg[7].value;
+help1 = report["quer:object"].reportDetails.report.args.arg[8].value;
+version1 = report["quer:object"].reportDetails.report.args.arg[14].value;
+ran1 = report["quer:object"].reportDetails.report.hostname;
+log1 = report["quer:object"].reportDetails.report.log.system[0].message;
+cron1 = report["quer:object"].reportDetails.seriesConfig.schedule.cron.min + " " + report["quer:object"].reportDetails.seriesConfig.schedule.cron.hour + " ";
+cron2 = report["quer:object"].reportDetails.seriesConfig.schedule.cron.wday + report["quer:object"].reportDetails.seriesConfig.schedule.cron.month + report["quer:object"].reportDetails.seriesConfig.schedule.cron.mday;
+cron3 = cron1 + cron2;
+var sdscData = [["cron", cron3],[ "ran on",   ran1],[   "help",     help1],[  "log",   log1 ],[  "verbose",  verbose1],[  "version",  version1]]
