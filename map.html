@@ -1,0 +1,653 @@
+<!doctype html>
+<html>
+<head>
+  <script src="https://cdn.anychart.com/js/7.14.0/anychart-bundle.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script src ="testdata.js"></script>
+  <link rel="stylesheet" href="https://cdn.anychart.com/css/7.14.0/anychart-ui.min.css" />
+  <style>
+    body {
+      margin: 10px 0px 0px 10px;
+      padding: 0px;
+      background: black;
+    }
+
+   #container {
+    width: 50%; 
+
+    height: 98.5%;
+    margin: auto;
+    z-index: 1000;
+    position:absolute;
+    right: 0px;
+
+    top: 1%;
+    z-index: -1;
+    color: 'red';
+
+  }
+  #map {
+    height:90%;
+    width:55%;
+    position:absolute;
+    padding:0;
+    margin:0;
+    z-index: -2;
+
+  }
+  #header {
+    background: 'red';
+    z-index: 0;
+  }
+</style>
+</head>
+<body>
+
+  <div id="header">
+    <a href="https://www.xsede.org/"><img src="http://lima-vc-4.sdsc.optiputer.net/inca/xsede.png" alt="Xsede Logo"></a>
+    <a href="http://inca.sdsc.edu/" style="float: right;"><img src="http://lima-vc-4.sdsc.optiputer.net/inca/inca.png" alt="Inca Logo" style=""></a>
+  </div>
+  <div id="map"></div>
+  <div id="container"></div>
+
+ <script>
+     // set stage
+  stage = anychart.graphics.create("container");
+     //set layers
+  var layer_1 = stage.layer();
+  layer_1.zIndex(100);
+  var layer_2 = stage.layer();
+  layer_2.zIndex(-1);
+  var layer_3 = stage.layer();
+  var layer_4 = stage.layer();
+  var layer_5 = stage.layer();
+  var layer_6 = stage.layer();
+  var layer_7 = stage.layer();
+  var layer_8 = stage.layer();
+  var layer_9 = stage.layer();
+
+  var chart_1 = anychart.heatMap(SDSC);
+
+  chart_1.title("SDSC Comet");
+
+  chart_1.padding(50, 235, 0, -5); //change 150
+  chart_1.yScroller(true);
+ var xScroller = chart_1.xScroller();
+// scroller settings
+xScroller.enabled(true);
+  
+    
+  chart_1.title().fontColor('#45a2d1').fontSize(30).fontFamily('Verdana').fontWeight('900');
+  chart_1.yAxis().labels().fontColor('#45a2d1').fontSize("10");
+  chart_1.xAxis().labels().fontColor('#FF6347');
+  chart_1.xZoom().setToPointsCount(10,true).setTo(0.31, 0.7);
+  chart_1.yZoom().setToPointsCount(15);
+  chart_1.background('Black');
+
+     var beginTable = anychart.standalones.table();
+     var table = anychart.standalones.table();
+     beginTable.bounds("70%", "10%", "28%", "20%");
+     beginTable.fontFamily('Verdana').fontWeight("bold").fontSize("14").fontColor("#D3D3D3");
+     beginTable.getCol(1).width(10);
+     beginTable.getRow(0).height(16);
+     beginTable.getRow(1).height(15);
+     beginTable.getRow(2).height(30);
+     beginTable.getRow(3).height(16);
+     beginTable.getRow(4).height(15);
+     beginTable.rowOddFill("#000000");        // Set table background color
+     beginTable.rowEvenFill('#000000');
+     // adjusts table border and position text in each cell into center
+     beginTable.cellBorder("#00FFFFFF").vAlign("center").hAlign("center");
+     beginTable.contents(begin);
+     beginTable.container(layer_1).draw();
+     beginTable.zIndex(101);
+     
+     var pieChart;
+     var setupChartSettings = function(chart) {
+     chart.radius('40%');
+     chart.innerRadius('30%');
+     chart.legend().enabled(false);
+     chart.background().fill("#45a2d1");
+     chart.margin(0);
+     chart.padding([0, 5, 0, 5]);
+     chart.title().fontColor('#212121').fontSize(13).padding([0, 0, 10, 0]);
+     chart.draw();
+                                                 };
+     var cpuchart;
+     var wallchart;
+     
+     var tooltip = chart_1.tooltip();
+     tooltip.format(function(){
+  if(this.y == superComps[3].tests[0])
+  {
+           chart_1.listen("click", function()
+           {
+            table.bounds("65%", "10%", "50%", "60%");
+            table.fontFamily('Verdana').fontWeight('1').fontSize("10");
+            table.fontColor('#111');
+            table.getCol(0).width(75);
+            table.getCol(1).width(140);
+            table.rowOddFill('#45a2d1');       
+            table.rowEvenFill('#45a2d1');
+            table.cellBorder("#00FFFFFF").vAlign("center");
+            table.contents(sdscData);
+            table.zIndex(102);
+            table.container(layer_1).draw();
+            var memory_data =   [['Memory Usage', memoryData], ['', (100-memoryData)]]
+  
+            var cpu_data =  [['CPU Time', cpuTimeData], ['', (100-cpuTimeData)]]
+               
+            var wall_clock_time =[['Wall Clock Time', wallClockData], ['', (100-wallClockData)]]
+            pieChart = anychart.pie(memory_data);
+            pieChart.tooltip().format(function() {
+                    return this.value});
+            setupChartSettings(pieChart);
+            pieChart.container(layer_1);
+            pieChart.bounds("65%","75%","12%","11%");
+            cpuchart = anychart.pie(cpu_data);
+            cpuchart.radius('40%');
+            pieChart.innerRadius('30%');
+            cpuchart.legend().enabled(false);
+            cpuchart.background().fill("#45a2d1");
+            cpuchart.tooltip().format(function() {
+                    return this.value
+                });
+                setupChartSettings(cpuchart);
+               cpuchart.container(layer_1);
+               cpuchart.bounds("76%","75%","12%","11%");
+               
+            wallchart = anychart.pie(wall_clock_time);
+  
+            wallchart.radius('40%');
+            pieChart.innerRadius('30%');
+            wallchart.legend().enabled(false);
+            wallchart.background().fill("#45a2d1");
+            wallchart.tooltip().format(function() {
+                    return this.value
+                        });
+            setupChartSettings(wallchart);
+            wallchart.container(layer_1);
+            wallchart.bounds("87%","75%","12%","11%");
+
+            });
+      
+         }
+         
+return "Click";
+});
+
+
+  // draw
+  chart_1.container(layer_1).draw();
+
+
+  var chart_2 = anychart.heatMap(Stanford);
+  chart_2.title("Stanford XStream");
+  chart_2.padding(50, 235, 0, -5);
+  chart_2.yScroller(true);
+  chart_2.xScroller(true);
+  chart_2.title().fontColor('#45a2d1').fontSize(30).fontFamily('Verdana').fontWeight('900').fontWeight('900');
+  chart_2.yAxis().labels().fontColor('#45a2d1').fontSize("10");
+  chart_2.xAxis().labels().fontColor('#FF6347');
+  chart_2.xZoom().setToPointsCount(8).setTo(0.4, 0.6);
+  chart_2.yZoom().setToPointsCount(15);
+  chart_2.background('Black');
+
+  var tooltip = chart_2.tooltip();
+  tooltip.enabled(false);
+ 
+     var beginTable2 = anychart.standalones.table();
+    
+     beginTable2.bounds("70%", "10%", "28%", "20%");
+     beginTable2.fontFamily('Verdana').fontWeight("bold").fontSize("14").fontColor("#D3D3D3");
+     beginTable2.getCol(1).width(10);
+     beginTable2.getRow(0).height(16);
+     beginTable2.getRow(1).height(15);
+     beginTable2.getRow(2).height(30);
+     beginTable2.getRow(3).height(16);
+     beginTable2.getRow(4).height(15);
+     beginTable2.rowOddFill("#000000");        // Set table background color
+     beginTable2.rowEvenFill('#000000');
+     // adjusts table border and position text in each cell into center
+     beginTable2.cellBorder("#00FFFFFF").vAlign("center").hAlign("center");
+     beginTable2.contents(begin);
+     beginTable2.container(layer_2).draw();
+     beginTable2.zIndex(101);
+     
+     
+  // draw
+  chart_2.container(layer_2).draw();
+
+  var chart_3 = anychart.heatMap(LSU);
+  chart_3.title("LSU Supermic");
+  chart_3.padding(50, 235, 0, -5);
+  chart_3.yScroller(true);
+  chart_3.xScroller(true);
+  chart_3.title().fontColor('#45a2d1').fontSize(30).fontFamily('Verdana').fontWeight('900');
+  chart_3.yAxis().labels().fontColor('#45a2d1').fontSize("10");
+  chart_3.xAxis().labels().fontColor('#FF6347');
+  chart_3.xZoom().setToPointsCount(40).setTo(0.4, 0.6);
+  chart_3.yZoom().setToPointsCount(15);
+  chart_3.background('Black');
+  var tooltip = chart_3.tooltip();
+  tooltip.enabled(false);
+ var beginTable3 = anychart.standalones.table();
+    
+     beginTable3.bounds("70%", "10%", "28%", "20%");
+     beginTable3.fontFamily('Verdana').fontWeight("bold").fontSize("14").fontColor("#D3D3D3");
+     beginTable3.getCol(1).width(10);
+     beginTable3.getRow(0).height(16);
+     beginTable3.getRow(1).height(15);
+     beginTable3.getRow(2).height(30);
+     beginTable3.getRow(3).height(16);
+     beginTable3.getRow(4).height(15);
+     beginTable3.rowOddFill("#000000");        // Set table background color
+     beginTable3.rowEvenFill('#000000');
+     // adjusts table border and position text in each cell into center
+     beginTable3.cellBorder("#00FFFFFF").vAlign("center").hAlign("center");
+     beginTable3.contents(begin);
+     beginTable3.container(layer_3).draw();
+     beginTable3.zIndex(101);
+  // draw
+  chart_3.container(layer_3).draw();
+     
+  var chart_4 = anychart.heatMap(OSU);
+  chart_4.title("OSG");
+  chart_4.padding(50, 235, 0, -5);
+  chart_4.yScroller(true);
+  chart_4.title().fontColor('#45a2d1').fontSize(30).fontFamily('Verdana').fontWeight('900');
+  chart_4.yAxis().labels().fontColor('#45a2d1').fontSize("10");
+  chart_4.xAxis().labels().fontColor('#FF6347');
+  chart_4.xScroller(true);
+  chart_4.xZoom().setToPointsCount(8).setTo(0.4, 0.6);
+  chart_4.yZoom().setToPointsCount(15);
+  chart_4.background('Black');
+  var tooltip = chart_4.tooltip();
+  tooltip.enabled(false);
+ var beginTable4 = anychart.standalones.table();
+    
+     beginTable4.bounds("70%", "10%", "28%", "20%");
+     beginTable4.fontFamily('Verdana').fontWeight("bold").fontSize("14").fontColor("#D3D3D3");
+     beginTable4.getCol(1).width(10);
+     beginTable4.getRow(0).height(16);
+     beginTable4.getRow(1).height(15);
+     beginTable4.getRow(2).height(30);
+     beginTable4.getRow(3).height(16);
+     beginTable4.getRow(4).height(15);
+     beginTable4.rowOddFill("#000000");        // Set table background color
+     beginTable4.rowEvenFill('#000000');
+     // adjusts table border and position text in each cell into center
+     beginTable4.cellBorder("#00FFFFFF").vAlign("center").hAlign("center");
+     beginTable4.contents(begin);
+     beginTable4.container(layer_4).draw();
+     beginTable4.zIndex(101);
+  chart_4.container(layer_4).draw();
+     
+  var chart_5 = anychart.heatMap(Pitt);
+  // set data for the Winter Sales
+  var chart_5 = anychart.heatMap(Pitt);
+  chart_5.title("Psc Bridges");
+  chart_5.padding(50, 235, 0, -5);
+  chart_5.yScroller(true);
+  chart_5.xScroller(true);
+  chart_5.title().fontColor('#45a2d1').fontSize(30).fontFamily('Verdana').fontWeight('900');
+  chart_5.yAxis().labels().fontColor('#45a2d1').fontSize("10");
+  chart_5.xAxis().labels().fontColor('#FF6347');
+  chart_5.xZoom().setToPointsCount(8).setTo(0.4, 0.6);
+  chart_5.yZoom().setToPointsCount(13);
+  chart_5.background('Black');
+
+  var tooltip = chart_5.tooltip();
+  tooltip.enabled(false);
+var beginTable5 = anychart.standalones.table();
+    
+     beginTable5.bounds("70%", "10%", "28%", "20%");
+     beginTable5.fontFamily('Verdana').fontWeight("bold").fontSize("14").fontColor("#D3D3D3");
+     beginTable5.getCol(1).width(10);
+     beginTable5.getRow(0).height(16);
+     beginTable5.getRow(1).height(15);
+     beginTable5.getRow(2).height(30);
+     beginTable5.getRow(3).height(16);
+     beginTable5.getRow(4).height(15);
+     beginTable5.rowOddFill("#000000");        // Set table background color
+     beginTable5.rowEvenFill('#000000');
+     // adjusts table border and position text in each cell into center
+     beginTable5.cellBorder("#00FFFFFF").vAlign("center").hAlign("center");
+     beginTable5.contents(begin);
+     beginTable5.container(layer_5).draw();
+     beginTable5.zIndex(101);
+  // draw
+  chart_5.container(layer_5).draw();
+
+  var chart_6 = anychart.heatMap(TaccMav);
+  chart_6.title("Tacc Maverick");
+  chart_6.padding(50, 235, 0, -5);
+  chart_6.yScroller(true);
+  chart_6.xScroller(true);
+  chart_6.title().fontColor('#45a2d1').fontSize(30).fontFamily('Verdana').fontWeight('900');
+  chart_6.yAxis().labels().fontColor('#45a2d1').fontSize("10");
+  chart_6.xAxis().labels().fontColor('#FF6347');
+  chart_6.xZoom().setToPointsCount(8).setTo(0.4, 0.6);
+  chart_6.yZoom().setToPointsCount(15);
+  chart_6.background('Black');
+
+  var tooltip = chart_6.tooltip();
+  tooltip.enabled(false);
+var beginTable6 = anychart.standalones.table();
+    
+     beginTable6.bounds("70%", "10%", "28%", "20%");
+     beginTable6.fontFamily('Verdana').fontWeight("bold").fontSize("14").fontColor("#D3D3D3");
+     beginTable6.getCol(1).width(10);
+     beginTable6.getRow(0).height(16);
+     beginTable6.getRow(1).height(15);
+     beginTable6.getRow(2).height(30);
+     beginTable6.getRow(3).height(16);
+     beginTable6.getRow(4).height(15);
+     beginTable6.rowOddFill("#000000");        // Set table background color
+     beginTable6.rowEvenFill('#000000');
+     // adjusts table border and position text in each cell into center
+     beginTable6.cellBorder("#00FFFFFF").vAlign("center").hAlign("center");
+     beginTable6.contents(begin);
+     beginTable6.container(layer_6).draw();
+     beginTable6.zIndex(101);
+  chart_6.container(layer_6).draw();
+
+  var chart_7 = anychart.heatMap(TaccStamp1);
+     
+  chart_7.title("Tacc Stampede");
+  chart_7.padding(50, 235, 0, -5);
+  chart_7.yScroller(true);
+  chart_7.xScroller(true);
+  chart_7.title().fontColor('#45a2d1').fontSize(30).fontFamily('Verdana').fontWeight('900');
+  chart_7.yAxis().labels().fontColor('#45a2d1').fontSize("10");
+  chart_7.xAxis().labels().fontColor('#FF6347');
+
+  chart_7.xZoom().setToPointsCount(8).setTo(0.4, 0.6);
+  chart_7.yZoom().setToPointsCount(15);
+  chart_7.background('Black');
+  var tooltip = chart_7.tooltip();
+  tooltip.enabled(false);
+ var beginTable7 = anychart.standalones.table();
+    
+     beginTable7.bounds("70%", "10%", "28%", "20%");
+     beginTable7.fontFamily('Verdana').fontWeight("bold").fontSize("14").fontColor("#D3D3D3");
+     beginTable7.getCol(1).width(10);
+     beginTable7.getRow(0).height(16);
+     beginTable7.getRow(1).height(15);
+     beginTable7.getRow(2).height(30);
+     beginTable7.getRow(3).height(16);
+     beginTable7.getRow(4).height(15);
+     beginTable7.rowOddFill("#000000");        // Set table background color
+     beginTable7.rowEvenFill('#000000');
+     // adjusts table border and position text in each cell into center
+     beginTable7.cellBorder("#00FFFFFF").vAlign("center").hAlign("center");
+     beginTable7.contents(begin);
+     beginTable7.container(layer_7).draw();
+     beginTable7.zIndex(101);
+  chart_7.container(layer_7).draw();
+
+  var chart_8 = anychart.heatMap(TaccStamp2);
+  chart_8.title("Tacc Stampede2");
+  chart_8.padding(50, 235, 0, -5);
+  chart_8.yScroller(true);
+  chart_8.xScroller(true);
+  chart_8.title().fontColor('#45a2d1').fontSize(30).fontFamily('Verdana').fontWeight('900');
+  chart_8.yAxis().labels().fontColor('#45a2d1').fontSize("10");
+  chart_8.xAxis().labels().fontColor('#FF6347');
+
+
+  chart_8.xZoom().setToPointsCount(8).setTo(0.4, 0.6);
+  chart_8.yZoom().setToPointsCount(15);
+  chart_8.background('Black');
+
+  var tooltip = chart_8.tooltip();
+  tooltip.enabled(false);
+var beginTable8 = anychart.standalones.table();
+    
+     beginTable8.bounds("70%", "10%", "28%", "20%");
+     beginTable8.fontFamily('Verdana').fontWeight("bold").fontSize("14").fontColor("#D3D3D3");
+     beginTable8.getCol(1).width(10);
+     beginTable8.getRow(0).height(16);
+     beginTable8.getRow(1).height(15);
+     beginTable8.getRow(2).height(30);
+     beginTable8.getRow(3).height(16);
+     beginTable8.getRow(4).height(15);
+     beginTable8.rowOddFill("#000000");        // Set table background color
+     beginTable8.rowEvenFill('#000000');
+     // adjusts table border and position text in each cell into center
+     beginTable8.cellBorder("#00FFFFFF").vAlign("center").hAlign("center");
+     beginTable8.contents(begin);
+     beginTable8.container(layer_8).draw();
+     beginTable8.zIndex(101);
+  // draw
+  chart_8.container(layer_8).draw();
+
+  var chart_9 = anychart.heatMap(TaccWrang);
+  chart_9.title("Tacc Wrangler");
+  chart_9.padding(50, 235, 0, -5);
+  chart_9.yScroller(true);
+  chart_9.xScroller(true);
+  chart_9.title().fontColor('#45a2d1').fontSize(30).fontFamily('Verdana').fontWeight('900');
+  chart_9.yAxis().labels().fontColor('#45a2d1').fontSize("10");
+  chart_9.xAxis().labels().fontColor('#FF6347');
+  chart_9.xZoom().setToPointsCount(8).setTo(0.4, 0.6);
+  chart_9.yZoom().setToPointsCount(15);
+  chart_9.background('Black');
+
+  var tooltip = chart_9.tooltip();
+  tooltip.enabled(false);
+var beginTable9 = anychart.standalones.table();
+    
+     beginTable9.bounds("70%", "10%", "28%", "20%");
+     beginTable9.fontFamily('Verdana').fontWeight("bold").fontSize("14").fontColor("#D3D3D3");
+     beginTable9.getCol(1).width(10);
+     beginTable9.getRow(0).height(16);
+     beginTable9.getRow(1).height(15);
+     beginTable9.getRow(2).height(30);
+     beginTable9.getRow(3).height(16);
+     beginTable9.getRow(4).height(15);
+     beginTable9.rowOddFill("#000000");        // Set table background color
+     beginTable9.rowEvenFill('#000000');
+     // adjusts table border and position text in each cell into center
+     beginTable9.cellBorder("#00FFFFFF").vAlign("center").hAlign("center");
+     beginTable9.contents(begin);
+     beginTable9.container(layer_9).draw();
+     beginTable9.zIndex(101);
+  chart_9.container(layer_9).draw();
+
+  var container = document.getElementById("container");
+
+  function initMap() {
+    var coor = {lat: 39.7071856, lng: -93.88867};
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 4,
+      center: coor,
+      mapTypeId: google.maps.MapTypeId.HYBRID,
+      labels: true,
+      background: 'black'
+    });
+
+    var supercomps = [['San Diego Super Computing Center', 32.887658, -117.238766, 'fail'],
+    ['Stanford Super Computing Center', 37.4288279, -122.1772369, 'pass'],
+    ['Louisiana State Super Computing Center', 30.4192451, -91.144898, 'fail'],
+    ['Ohio State Super Computing Center', 39.999919, -83.040009, 'pass'],
+    ['Pittsburgh State Super Computing Center', 40.4455908, -79.9492397, 'fail'],
+    ['Texas Austin Super Computing Center (Maverick)', 29.2835151, -97.73488049, 'fail'],
+    ['Texas Austin Super Computing Center (Stampede)', 31.2835151, -97.73488049, 'fail'],
+    ['Texas Austin Super Computing Center (Stampede2)', 30.2835151, -98.73488049, 'pass'],
+    ['Texas Austin Super Computing Center (Wrangler)', 30.2835151, -96.73488049, 'pass'],
+    ];
+
+ for (var i = 0; i < supercomps.length; i++) {
+      var icon = {
+          url: "http://lima-vc-4.sdsc.optiputer.net/inca/pass.png", // url
+          scaledSize: new google.maps.Size(30, 30), // scaled size
+        };
+        
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(supercomps[i][1], supercomps[i][2]),
+          map: map,
+          title: supercomps[i][0],
+          icon: icon
+
+        });
+        var message = supercomps[i][0]
+
+        function makeWindow(marker, message) {
+          marker.addListener('mouseover',function() {
+            var InfoWindow = new google.maps.InfoWindow({
+              content: message});
+            InfoWindow.open(map, marker);
+
+            marker.addListener('mouseout',function() {
+              InfoWindow.close(map, marker);
+
+            });
+          });
+
+          marker.addListener('click', function() {
+
+                //add stuff to listener here
+                if(marker.title == supercomps[0][0])
+                {
+                  stage.suspend();
+                  layer_1.zIndex(100);
+                  layer_2.zIndex(0);
+                  layer_3.zIndex(0);
+                  layer_4.zIndex(0);
+                  layer_5.zIndex(0);
+                  layer_6.zIndex(0);
+                  layer_7.zIndex(0);
+                  layer_8.zIndex(0);
+                  layer_9.zIndex(0);
+                  stage.resume();
+                }
+                if(marker.title == supercomps[1][0])
+                {
+                  stage.suspend();
+                  layer_1.zIndex(0);
+                  layer_2.zIndex(1000000);
+                  layer_3.zIndex(0);
+                  layer_4.zIndex(0);
+                  layer_5.zIndex(0);
+                  layer_6.zIndex(0);
+                  layer_7.zIndex(0);
+                  layer_8.zIndex(0);
+                  layer_9.zIndex(0);
+                  stage.resume();
+                }
+                if(marker.title == supercomps[2][0])
+                {
+                 stage.suspend();
+                 layer_1.zIndex(0);
+                 layer_2.zIndex(0);
+                 layer_3.zIndex(1000000);
+                 layer_4.zIndex(0);
+                 layer_5.zIndex(0);
+                 layer_6.zIndex(0);
+                 layer_7.zIndex(0);
+                 layer_8.zIndex(0);
+                 layer_9.zIndex(0);
+                 stage.resume();
+               }
+               if(marker.title == supercomps[3][0])
+               {
+                stage.suspend();
+                layer_1.zIndex(0);
+                layer_2.zIndex(0);
+                layer_3.zIndex(0);
+                layer_4.zIndex(1000000);
+                layer_5.zIndex(0);
+                layer_6.zIndex(0);
+                layer_7.zIndex(0);
+                layer_8.zIndex(0);
+                layer_9.zIndex(0);
+                stage.resume();
+              }
+              if(marker.title == supercomps[4][0])
+              {
+                stage.suspend();
+                layer_1.zIndex(0);
+                layer_2.zIndex(0);
+                layer_3.zIndex(0);
+                layer_4.zIndex(0);
+                layer_5.zIndex(1000000);
+                layer_6.zIndex(0);
+                layer_7.zIndex(0);
+                layer_8.zIndex(0);
+                layer_9.zIndex(0);
+                stage.resume();
+              }
+              if(marker.title == supercomps[5][0])
+              {
+                stage.suspend();
+                layer_1.zIndex(0);
+                layer_2.zIndex(0);
+                layer_3.zIndex(0);
+                layer_4.zIndex(0);
+                layer_5.zIndex(0);
+                layer_6.zIndex(1000000);
+                layer_7.zIndex(0);
+                layer_8.zIndex(0);
+                layer_9.zIndex(0);
+                stage.resume();
+              }
+              if(marker.title == supercomps[6][0])
+              {
+                stage.suspend();
+                layer_1.zIndex(0);
+                layer_2.zIndex(0);
+                layer_3.zIndex(0);
+                layer_4.zIndex(0);
+                layer_5.zIndex(0);
+                layer_6.zIndex(0);
+                layer_7.zIndex(1000000);
+                layer_8.zIndex(0);
+                layer_9.zIndex(0);
+                stage.resume();
+              }
+              if(marker.title == supercomps[7][0])
+              {
+                stage.suspend();
+                layer_1.zIndex(0);
+                layer_2.zIndex(0);
+                layer_3.zIndex(0);
+                layer_4.zIndex(0);
+                layer_5.zIndex(0);
+                layer_6.zIndex(0);
+                layer_7.zIndex(0);
+                layer_8.zIndex(1000000);
+                layer_9.zIndex(0);
+                stage.resume();
+              }
+              if(marker.title == supercomps[8][0])
+              {
+                stage.suspend();
+                layer_1.zIndex(0);
+                layer_2.zIndex(0);
+                layer_3.zIndex(0);
+                layer_4.zIndex(0);
+                layer_5.zIndex(0);
+                layer_6.zIndex(0);
+                layer_7.zIndex(0);
+                layer_8.zIndex(0);
+                layer_9.zIndex(1000000);
+                stage.resume();
+              }
+
+
+            });
+}
+
+makeWindow(marker,message);
+
+};
+}      
+
+</script>
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-KaXaQFnAGTSy3SslrfREyIekXfjYm1Y&callback=initMap">
+</script>
+
+</body>
+</html>
